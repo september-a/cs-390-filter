@@ -13,6 +13,10 @@ int main(int argc, char *argv[]) {
 
     // Loop through each filename from stdin
     for (i = 1; i < argc; i++) {
+        // if the argument is a string - ignore (for now) and move on
+        if (strcmp(argv[i], "-u") == 0){
+            continue;
+        }
         // Open the file
         input_file = fopen(argv[i], "rb");
         if (input_file == NULL) {
@@ -34,8 +38,8 @@ int main(int argc, char *argv[]) {
 
         // If "-u" flag is provided and file is Windows formatted text
         if (argc > 2 && strcmp(argv[1], "-u") == 0) {
-            // convert_to_unix(input_file);
-            printf("to be converted to unix");
+            // convert(input_file) to be implemented
+            printf(" to be converted to unix");
         }
 
         fclose(input_file);

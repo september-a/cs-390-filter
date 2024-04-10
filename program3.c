@@ -7,7 +7,7 @@ int is_text_file(FILE *file);
 
 void convert_to_unix(FILE *file);
 
-int main() {
+int main(int argc, char *argv[]) {
     char filename[BUFFER_SIZE];
     FILE *input_file;
 
@@ -19,9 +19,8 @@ int main() {
         // Remove newline character from the end of filename
         filename[strcspn(filename, "\n")] = '\0';
 
-        if (strcmp(filename, "-u") == 0) {
+        if (argc == 2) {
             unix_conversion_flag = 1;
-            continue;
         }
 
         // Open the file
@@ -36,6 +35,14 @@ int main() {
         if (!is_text_file(input_file)) {
             // Display message on stderr if file is not text
             fprintf(stderr, "%s is not a text file\n", filename);
+
+            // If "-u" flag is provided and file is Windows formatted text
+            if (unix_conversion_flag == 1) {
+                printf("%s\n", " and is to be converted to unix");
+                convert_to_unix(input_file);
+                unix_conversion_flag = 0; // Reset the flag after conversion
+            }
+            
             fclose(input_file);
             continue;
         }
@@ -43,11 +50,7 @@ int main() {
         // Display the filename on stdout
         printf("%s is a txt file\n", filename);
 
-        // If "-u" flag is provided and file is Windows formatted text
-        if (unix_conversion_flag) {
-            convert_to_unix(input_file);
-            unix_conversion_flag = 0; // Reset the flag after conversion
-        }
+        
 
         fclose(input_file);
     }

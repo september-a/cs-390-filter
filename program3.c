@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
         }
 
         // Open the file
-        input_file = fopen(filename, "rb");
+        input_file = fopen(filename, "r+");
         if (input_file == NULL) {
             // Error message if file could not be opened
             fprintf(stderr, "Error: Could not open file %s\n", filename);
@@ -38,7 +38,6 @@ int main(int argc, char *argv[]) {
 
             // If "-u" flag is provided and file is Windows formatted text
             if (unix_conversion_flag == 1) {
-                printf("%s\n", " and is to be converted to unix");
                 convert_to_unix(input_file);
                 unix_conversion_flag = 0; // Reset the flag after conversion
             }
@@ -73,18 +72,24 @@ int is_text_file(FILE *file) {
 
 // Function to convert Windows formatted text file to Unix format
 void convert_to_unix(FILE *file) {
-    FILE *temp_file = tmpfile();
+    FILE *temp_file = tmpfile(); // Creates a temporary file
     int ch;
     while ((ch = fgetc(file)) != EOF) {
         if (ch != '\r') {
-            fputc(ch, temp_file);
+            fputc(ch, temp_file); // Write characters to the temporary file without '\r'
         }
     }
-    rewind(temp_file);
-    rewind(file);
+    rewind(temp_file); // Rewind the temporary file to the beginning
+    rewind(file); // Rewind the original file to the beginning
+
+    // Open the original file in read/write mode
+    freopen(NULL, "r+", file);
+    
     while ((ch = fgetc(temp_file)) != EOF) {
-        fputc(ch, file);
+        fputc(ch, file); // Write characters from the temporary file back to the original file
     }
-    fclose(temp_file);
+    fclose(temp_file); // Close the temporary file
+
+    printf("Conversion completed.\n"); // Debug output
 }
 
